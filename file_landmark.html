@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>file_landmark module &#8212; Facial Feature 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="graficar module" href="graficar.html" />
+    <link rel="prev" title="facial_feature_from_video module" href="facial_feature_from_video.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-file_landmark">
+<span id="file-landmark-module"></span><h1>file_landmark module<a class="headerlink" href="#module-file_landmark" title="Link to this heading">¶</a></h1>
+<p>This module find landmarks from images in a folder and save them in a json file</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="file_landmark.find_landmarks">
+<span class="sig-prename descclassname"><span class="pre">file_landmark.</span></span><span class="sig-name descname"><span class="pre">find_landmarks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_face_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'input'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'detected'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deteccion'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1920,</span> <span class="pre">1080)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/file_landmark.html#find_landmarks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#file_landmark.find_landmarks" title="Link to this definition">¶</a></dt>
+<dd><p>This function take a list of images and other setup variables. It finds if there are faces in the image, if there are faces, it calculate their landmark and save them in a json file</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="file_landmark.save_in_json">
+<span class="sig-prename descclassname"><span class="pre">file_landmark.</span></span><span class="sig-name descname"><span class="pre">save_in_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">to_save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deteccion'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/file_landmark.html#save_in_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#file_landmark.save_in_json" title="Link to this definition">¶</a></dt>
+<dd><p>This sub function, takes dict and saves it in a json file</p>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Facial Feature</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">facial-landmark-detection</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alinear.html">alinear module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camera_to_video.html">camera_to_video module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control_database_binarizada.html">control_database_binarizada module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control_database_color.html">control_database_color module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control_database_continuous.html">control_database_continuous module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control_database_headpose.html">control_database_headpose module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control_dataset.html">control_dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elipse.html">elipse module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="facial_feature_from_file.html">facial_feature_from_file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="facial_feature_from_video.html">facial_feature_from_video module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">file_landmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graficar.html">graficar module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installer.html">installer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="procesamiento.html">procesamiento module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reducir_y_binarizar_dataset.html">reducir_y_binarizar_dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reducir_y_color_dataset.html">reducir_y_color_dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roll_angle.html">roll_angle module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="show_video.html">show_video module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yaw_angle.html">yaw_angle module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">facial-landmark-detection</a><ul>
+      <li>Previous: <a href="facial_feature_from_video.html" title="previous chapter">facial_feature_from_video module</a></li>
+      <li>Next: <a href="graficar.html" title="next chapter">graficar module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Rinaldo Almada.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/file_landmark.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

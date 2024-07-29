@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>graficar module &#8212; Facial Feature 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="procesamiento module" href="procesamiento.html" />
+    <link rel="prev" title="file_landmark module" href="file_landmark.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-graficar">
+<span id="graficar-module"></span><h1>graficar module<a class="headerlink" href="#module-graficar" title="Link to this heading">¶</a></h1>
+<p>This module takes frames and graph basic objects in it</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="graficar.boundingbox">
+<span class="sig-prename descclassname"><span class="pre">graficar.</span></span><span class="sig-name descname"><span class="pre">boundingbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundingbox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graficar.html#boundingbox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graficar.boundingbox" title="Link to this definition">¶</a></dt>
+<dd><p>This function takes a frame boundingbox and color. It returns a frame with the boundingbox graphed</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graficar.graph_axis">
+<span class="sig-prename descclassname"><span class="pre">graficar.</span></span><span class="sig-name descname"><span class="pre">graph_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">255,</span> <span class="pre">255)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graficar.html#graph_axis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graficar.graph_axis" title="Link to this definition">¶</a></dt>
+<dd><p>This function takes a frame, an origin point, axis, length and color. It returns the frame with a line from lenght in -axis direction to lenght in axis direction graphed</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graficar.graph_circle">
+<span class="sig-prename descclassname"><span class="pre">graficar.</span></span><span class="sig-name descname"><span class="pre">graph_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graficar.html#graph_circle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graficar.graph_circle" title="Link to this definition">¶</a></dt>
+<dd><p>This function takes a frame, an array of points as a, a color and a tickness. It graphs all the point with the given color and thickness in the frame. It return the frame</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graficar.graph_ellipse">
+<span class="sig-prename descclassname"><span class="pre">graficar.</span></span><span class="sig-name descname"><span class="pre">graph_ellipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ellipse_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graficar.html#graph_ellipse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graficar.graph_ellipse" title="Link to this definition">¶</a></dt>
+<dd><p>This function takes a frame, ellipse values, a color and thicknees. It return the frame with the ellipse graphed</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graficar.graph_eyes">
+<span class="sig-prename descclassname"><span class="pre">graficar.</span></span><span class="sig-name descname"><span class="pre">graph_eyes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_eye_centroid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left_eye_centroid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rigth_eye_ellipse_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left_eye_ellipse_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">255,</span> <span class="pre">0)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graficar.html#graph_eyes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graficar.graph_eyes" title="Link to this definition">¶</a></dt>
+<dd><p>This function takes a frame, eyes centroids, eyes ellipse values and a color. It return the frame with the centoroids and ellipse graphed</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graficar.graph_face_section">
+<span class="sig-prename descclassname"><span class="pre">graficar.</span></span><span class="sig-name descname"><span class="pre">graph_face_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_eye</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left_eye</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mouth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forehead</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(255,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graficar.html#graph_face_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graficar.graph_face_section" title="Link to this definition">¶</a></dt>
+<dd><p>This function takes a frame, face sections (up to four) as array and a color. It return the frame with all sections graphed</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graficar.graph_letter">
+<span class="sig-prename descclassname"><span class="pre">graficar.</span></span><span class="sig-name descname"><span class="pre">graph_letter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">letter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordenate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graficar.html#graph_letter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graficar.graph_letter" title="Link to this definition">¶</a></dt>
+<dd><p>This function takes a frame, letter, coordenate, color and thickness. It returns the frame with the letter graphed in the coordenate</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="graficar.graph_projection">
+<span class="sig-prename descclassname"><span class="pre">graficar.</span></span><span class="sig-name descname"><span class="pre">graph_projection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">255)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/graficar.html#graph_projection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graficar.graph_projection" title="Link to this definition">¶</a></dt>
+<dd><p>This function takes a frame, an origin point, axis, distance and color. It returns the frame with a line from origin to distance in axis direction graphed</p>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Facial Feature</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">facial-landmark-detection</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alinear.html">alinear module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control_dataset.html">control_dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elipse.html">elipse module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file_landmark.html">file_landmark module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">graficar module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="procesamiento.html">procesamiento module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">facial-landmark-detection</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">facial-landmark-detection</a><ul>
+      <li>Previous: <a href="file_landmark.html" title="previous chapter">file_landmark module</a></li>
+      <li>Next: <a href="procesamiento.html" title="next chapter">procesamiento module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Rinaldo Almada.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/graficar.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

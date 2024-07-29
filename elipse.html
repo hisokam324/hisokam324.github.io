@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>elipse module &#8212; Facial Feature 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="file_landmark module" href="file_landmark.html" />
+    <link rel="prev" title="control_dataset module" href="control_dataset.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-elipse">
+<span id="elipse-module"></span><h1>elipse module<a class="headerlink" href="#module-elipse" title="Link to this heading">¶</a></h1>
+<p>This module is use to aproximate the landmarks of the eye into an elipse by conic least squares.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="elipse.cart_to_pol">
+<span class="sig-prename descclassname"><span class="pre">elipse.</span></span><span class="sig-name descname"><span class="pre">cart_to_pol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coeffs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elipse.html#cart_to_pol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elipse.cart_to_pol" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the cartesian conic coefficients, (a, b, c, d, e, f), to the
+ellipse parameters, where F(x, y) = ax^2 + bxy + cy^2 + dx + ey + f = 0.
+The returned parameters are x0, y0, ap, bp, e, phi, where (x0, y0) is the
+ellipse centre; (ap, bp) are the semi-major and semi-minor axes,
+respectively; e is the eccentricity; and phi is the rotation of the semi-
+major axis from the x-axis.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="elipse.fit_ellipse">
+<span class="sig-prename descclassname"><span class="pre">elipse.</span></span><span class="sig-name descname"><span class="pre">fit_ellipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elipse.html#fit_ellipse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elipse.fit_ellipse" title="Link to this definition">¶</a></dt>
+<dd><p>Fit the coefficients a,b,c,d,e,f, representing an ellipse described by
+the formula F(x,y) = ax^2 + bxy + cy^2 + dx + ey + f = 0 to the provided
+arrays of data points x=[x1, x2, …, xn] and y=[y1, y2, …, yn].</p>
+<p>Based on the algorithm of Halir and Flusser, “Numerically stable direct
+least squares fitting of ellipses’.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="elipse.get_best_ellipse">
+<span class="sig-prename descclassname"><span class="pre">elipse.</span></span><span class="sig-name descname"><span class="pre">get_best_ellipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elipse.html#get_best_ellipse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elipse.get_best_ellipse" title="Link to this definition">¶</a></dt>
+<dd><p>Alternative way to calculate the ellipse</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="elipse.get_best_ellipse_conical">
+<span class="sig-prename descclassname"><span class="pre">elipse.</span></span><span class="sig-name descname"><span class="pre">get_best_ellipse_conical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elipse.html#get_best_ellipse_conical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elipse.get_best_ellipse_conical" title="Link to this definition">¶</a></dt>
+<dd><p>This function takes the points and use the functions fit_elipse and cart_to_pol to get the parameters of the elipse that best fit the points. This parameters are return in a dict</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="elipse.get_ellipse">
+<span class="sig-prename descclassname"><span class="pre">elipse.</span></span><span class="sig-name descname"><span class="pre">get_ellipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elipse.html#get_ellipse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elipse.get_ellipse" title="Link to this definition">¶</a></dt>
+<dd><p>This function takes as input the center, major axis, ratio (major axis/minor axis) and rotation of the ellipse, also the amount of points. It returns an array with points of the ellipse, the array has a length equal to the amount of points</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>x<span class="classifier">ndarray, shape (npoints, )</span></dt><dd><p>A 1-D array of monotonically increasing real values. <code class="docutils literal notranslate"><span class="pre">x</span></code> cannot
+include duplicate values (otherwise f is overspecified)</p>
+</dd>
+<dt>y<span class="classifier">ndarray, shape (…, npoints, …)</span></dt><dd><p>A N-D array of real values. <code class="docutils literal notranslate"><span class="pre">y</span></code>’s length along the interpolation
+axis must be equal to the length of <code class="docutils literal notranslate"><span class="pre">x</span></code>. Use the <code class="docutils literal notranslate"><span class="pre">axis</span></code>
+parameter to select the interpolation axis.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="elipse.get_random_ellipse">
+<span class="sig-prename descclassname"><span class="pre">elipse.</span></span><span class="sig-name descname"><span class="pre">get_random_ellipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elipse.html#get_random_ellipse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elipse.get_random_ellipse" title="Link to this definition">¶</a></dt>
+<dd><p>This function takes the center of the ellipse and the amount of points. It randomize the major axis, ratio and rotation. It use the function get_ellipse with the randomized parameters, obteining the points of the random ellipse. It returns an array with the points of the random ellipse</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="elipse.open_eye">
+<span class="sig-prename descclassname"><span class="pre">elipse.</span></span><span class="sig-name descname"><span class="pre">open_eye</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/elipse.html#open_eye"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elipse.open_eye" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Facial Feature</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alinear.html">alinear module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control_dataset.html">control_dataset module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">elipse module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file_landmark.html">file_landmark module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graficar.html">graficar module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="procesamiento.html">procesamiento module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">Mains</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">Modules</a><ul>
+      <li>Previous: <a href="control_dataset.html" title="previous chapter">control_dataset module</a></li>
+      <li>Next: <a href="file_landmark.html" title="next chapter">file_landmark module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Rinaldo Almada.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/elipse.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
