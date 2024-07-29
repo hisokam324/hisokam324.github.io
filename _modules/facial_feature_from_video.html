@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>facial_feature_from_video &#8212; Facial Feature 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for facial_feature_from_video</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This program calculate facial features from a video capture and save them in another video</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="c1"># Import Packages</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">procesamiento</span> <span class="k">as</span> <span class="nn">pr</span>
+<span class="kn">import</span> <span class="nn">graficar</span> <span class="k">as</span> <span class="nn">gr</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../facial_feature_from_video.html#facial_feature_from_video.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    It starts by loading initial setup from configuracion.json</span>
+
+<span class="sd">    The program separates the video capture by frames</span>
+<span class="sd">    </span>
+<span class="sd">    For each frame it detects if there is any face, if there is, it calculates the facial features. </span>
+<span class="sd">    </span>
+<span class="sd">    All frames are save in an output video and/or independent images, depending on the configuracion.json saving_format.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Initial setup</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;configuracion.json&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">configuration</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">][</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span>
+    <span class="n">models_dir</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">][</span><span class="s1">&#39;model_dir&#39;</span><span class="p">]</span> 
+    <span class="n">calculate_feature</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">][</span><span class="s1">&#39;from_video&#39;</span><span class="p">][</span><span class="s1">&#39;calculate_feature&#39;</span><span class="p">]</span>
+    <span class="n">saving_format</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">][</span><span class="s1">&#39;from_video&#39;</span><span class="p">][</span><span class="s1">&#39;saving_format&#39;</span><span class="p">]</span>
+    <span class="n">video_file</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">][</span><span class="s1">&#39;from_video&#39;</span><span class="p">][</span><span class="s1">&#39;video_file&#39;</span><span class="p">]</span>
+    <span class="n">video_output</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">][</span><span class="s1">&#39;from_video&#39;</span><span class="p">][</span><span class="s1">&#39;video_output&#39;</span><span class="p">]</span>
+    <span class="n">video_detect</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">][</span><span class="s1">&#39;from_video&#39;</span><span class="p">][</span><span class="s1">&#39;video_detect&#39;</span><span class="p">]</span>
+    <span class="n">resize</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">][</span><span class="s1">&#39;resize&#39;</span><span class="p">]</span>
+    <span class="n">haarcascade</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">][</span><span class="s1">&#39;face detection model&#39;</span><span class="p">]</span>
+    <span class="n">LBFmodel</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">][</span><span class="s1">&#39;landmark detection model&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Create an instance of the Face Detection Cascade Classifier</span>
+    <span class="n">detector</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CascadeClassifier</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">models_dir</span><span class="p">,</span> <span class="n">haarcascade</span><span class="p">))</span>
+
+    <span class="c1"># Create an instance of the Facial landmark Detector with the model</span>
+    <span class="n">landmark_detector</span>  <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">face</span><span class="o">.</span><span class="n">createFacemarkLBF</span><span class="p">()</span>
+    <span class="n">landmark_detector</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">models_dir</span><span class="p">,</span> <span class="n">LBFmodel</span><span class="p">))</span>
+
+    <span class="c1"># Get image from video or camera</span>
+    <span class="k">if</span> <span class="n">video_file</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="n">video_file</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.avi&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">video_file</span><span class="p">))</span>
+
+    <span class="c1"># First frame</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="c1"># Frame shape</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">saving_format</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="c1"># Initialize video format</span>
+        <span class="n">fourcc</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter_fourcc</span><span class="p">(</span><span class="o">*</span><span class="s1">&#39;MJPG&#39;</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">.avi&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">video_output</span><span class="p">),</span> <span class="n">fourcc</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">))</span>
+        
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Press Q to release</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Frame number</span>
+    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># Frame number coordenate</span>
+    <span class="n">coordinate</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="o">*</span><span class="mf">.87</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="mf">.95</span><span class="p">))</span>
+    <span class="k">while</span> <span class="n">cap</span><span class="o">.</span><span class="n">isOpened</span><span class="p">():</span>
+        <span class="c1"># Get frame</span>
+        <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="n">ret</span><span class="p">:</span>
+
+            <span class="c1"># Convert frame to grayscale</span>
+            <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+            <span class="c1"># Detect faces using the haarcascade classifier on the &quot;grayscale image&quot;</span>
+            <span class="n">faces</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">detectMultiScale</span><span class="p">(</span><span class="n">gray</span><span class="p">)</span>
+        
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Detect landmarks on &quot;gray&quot;</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">landmarks</span> <span class="o">=</span> <span class="n">landmark_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">faces</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">landmarks</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1">#print(len(landmarks))</span>
+            
+            <span class="k">for</span> <span class="n">landmark</span> <span class="ow">in</span> <span class="n">landmarks</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">calculate_feature</span><span class="p">:</span>
+                    <span class="c1"># Calculate facial features</span>
+                    <span class="n">centroideder</span><span class="p">,</span> <span class="n">centroideizq</span><span class="p">,</span> <span class="n">unidad</span><span class="p">,</span> <span class="n">origen_ojo</span><span class="p">,</span> <span class="n">distojos</span><span class="p">,</span> <span class="n">distfrente_ojo</span><span class="p">,</span> <span class="n">distboca_ojo</span><span class="p">,</span> <span class="n">angulo_cara</span><span class="p">,</span> <span class="n">angulo_ojo_derecho</span><span class="p">,</span> <span class="n">angulo_ojo_izquierdo</span><span class="p">,</span> <span class="n">valores_elipse_ojoder</span><span class="p">,</span> <span class="n">valores_elipse_ojoizq</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">calculate_facial_feature</span><span class="p">(</span><span class="n">landmark</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">36</span><span class="p">:</span><span class="mi">42</span><span class="p">],</span> <span class="n">landmark</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">42</span><span class="p">:</span><span class="mi">48</span><span class="p">],</span> <span class="n">landmark</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">17</span><span class="p">:</span><span class="mi">27</span><span class="p">],</span> <span class="n">landmark</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">48</span><span class="p">:</span><span class="mi">68</span><span class="p">])</span>
+                    <span class="c1"># Graph facial features</span>
+                    <span class="n">frame</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">graph_eyes</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">centroideder</span><span class="p">,</span> <span class="n">centroideizq</span><span class="p">,</span> <span class="n">valores_elipse_ojoder</span><span class="p">,</span> <span class="n">valores_elipse_ojoizq</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="c1"># Graph landmars</span>
+                <span class="n">frame</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">graph_circle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">landmark</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">256</span><span class="p">))</span>
+            <span class="c1"># Graph frame number</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">gr</span><span class="o">.</span><span class="n">graph_letter</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">iter</span><span class="p">),</span> <span class="n">coordinate</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+
+            <span class="c1"># Save frame</span>
+            <span class="k">if</span> <span class="n">saving_format</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Save frame on image</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">.jpg&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">video_detect</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">iter</span><span class="p">)),</span> <span class="n">frame</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">saving_format</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="c1"># Save frame on video</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> 
+        
+            <span class="c1"># Show frame</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">resize</span><span class="p">))</span>
+
+            <span class="c1"># Terminate the capture window</span>
+            <span class="k">if</span> <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span>  <span class="o">==</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">):</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">break</span>
+        <span class="nb">iter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Release capture</span>
+    <span class="n">cap</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">saving_format</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">destroyAllWindows</span><span class="p">()</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Facial Feature</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">facial-landmark-detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">facial-landmark-detection</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Rinaldo Almada.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
