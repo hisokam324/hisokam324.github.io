@@ -41,6 +41,20 @@
 <span class="k">def</span> <span class="nf">get_json_data</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">json_dir</span><span class="p">,</span> <span class="n">json_suffix</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function takes an image name and othe setup values. It returns the image file name, the boundingbox and face angle</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        image (String): Image name </span>
+<span class="sd">        </span>
+<span class="sd">        json_dir (String): Folder where image json file is located</span>
+<span class="sd">        </span>
+<span class="sd">        json_suffix (String): suffix of image json file</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        image_file (String): Name of full image file name</span>
+<span class="sd">        </span>
+<span class="sd">        boundingbox (List): Boundignbox of the face in the image</span>
+<span class="sd">        </span>
+<span class="sd">        face_angle (Float): Angle of inclination of the face in the image</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># Open json file</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">.json&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">json_dir</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">json_suffix</span><span class="p">))</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
@@ -55,6 +69,16 @@
 <span class="k">def</span> <span class="nf">cropp</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">boundingbox</span><span class="p">,</span> <span class="n">scale_boundingbox_by</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function takes a frame, boundigbox and a scaling factor. It sacle the bounding box by the scaling factor and cropp the image by the scaled boundingbox. It return the frame cropped</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        frame (Array of Arrays): Frame to cropp </span>
+<span class="sd">        </span>
+<span class="sd">        boundingbox (List): Boundignbox of the face in the image</span>
+<span class="sd">        </span>
+<span class="sd">        scale_boundingbox_by (Float): Sacaling factor of bounding box. </span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        cropped_frame (Array of Arrays): Frame cropped by the boundigbox</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># Get boundingbox corners coordenates</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">boundingbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -76,6 +100,17 @@
 <span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">boundingbox</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function takes a frame, a bounding box and a face angle. It returns the frame rotated by the face angles, using the boundingbox center as origin</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        frame (Array of Arrays): Frame to cropp </span>
+<span class="sd">        </span>
+<span class="sd">        boundingbox (List): Boundignbox of the face in the frame, the frame is rotated by the center of the boundingbox</span>
+<span class="sd">        </span>
+<span class="sd">        angle (Float): Angle to rotate the frame</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        rotated_frame (Array of Arrays): Frame rotated by the angle given</span>
+<span class="sd">    </span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># Get frame height and width</span>
     <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
@@ -106,7 +141,8 @@
 <h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">facial-landmark-detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">Mains</a></li>
 </ul>
 
 <div class="relations">

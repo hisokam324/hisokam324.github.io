@@ -57,17 +57,6 @@
 <span class="k">def</span> <span class="nf">get_ellipse</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">major</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">rotation</span><span class="p">,</span> <span class="n">n_points</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function takes as input the center, major axis, ratio (major axis/minor axis) and rotation of the ellipse, also the amount of points. It returns an array with points of the ellipse, the array has a length equal to the amount of points</span>
-<span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    x : ndarray, shape (npoints, )</span>
-<span class="sd">        A 1-D array of monotonically increasing real values. ``x`` cannot</span>
-<span class="sd">        include duplicate values (otherwise f is overspecified)</span>
-<span class="sd">    y : ndarray, shape (..., npoints, ...)</span>
-<span class="sd">        A N-D array of real values. ``y``&#39;s length along the interpolation</span>
-<span class="sd">        axis must be equal to the length of ``x``. Use the ``axis``</span>
-<span class="sd">        parameter to select the interpolation axis.</span>
-<span class="sd">    </span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">rotation_radians</span> <span class="o">=</span> <span class="n">rotation</span> <span class="o">/</span> <span class="mi">360</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
     <span class="n">rsin</span><span class="p">,</span> <span class="n">rcos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">rotation_radians</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">rotation_radians</span><span class="p">)</span>
