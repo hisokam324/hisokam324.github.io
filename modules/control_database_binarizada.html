@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>control_database_binarizada &#8212; Facial Feature 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for control_database_binarizada</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This program takes the reducir_y_binarizar_dataset json out and calculates a confusion matrix for every atribute</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="kn">import</span> <span class="nn">control_dataset</span>
+
+<div class="viewcode-block" id="probar_caracteristica">
+<a class="viewcode-back" href="../control_database_binarizada.html#control_database_binarizada.probar_caracteristica">[docs]</a>
+<span class="k">def</span> <span class="nf">probar_caracteristica</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">,</span> <span class="n">detection_with_feature</span><span class="p">,</span> <span class="n">data_with_feature</span><span class="p">,</span> <span class="n">caracteristica</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function calculates the confusion matrix</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="c1"># List of detected and not detected</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># List of predictions</span>
+    <span class="n">predicted</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># Load lists actual and predicted</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">detection_with_feature</span><span class="p">:</span>
+        <span class="n">actual</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="ow">not</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data_with_feature</span><span class="p">)</span>
+        <span class="n">predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="ow">not</span> <span class="n">ffhq_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">caracteristica</span><span class="p">])</span>
+    
+    <span class="c1"># Calculate confusion matrix</span>
+    <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">predicted</span><span class="p">,</span> <span class="n">actual</span><span class="p">)</span>
+    <span class="c1"># Extract True Positive, False positive, False negative and True negative from confusion matrix</span>
+    <span class="n">tp</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">tn</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Show confusion matrix</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">cm_display</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">ConfusionMatrixDisplay</span><span class="p">(</span><span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">display_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">])</span>
+
+        <span class="n">cm_display</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">caracteristica</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Cara detectada&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    
+    <span class="c1"># Return True Positive, False Positive, False Negative and True Negative</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tn</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../control_database_binarizada.html#control_database_binarizada.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Run program:</span>
+<span class="sd">    </span>
+<span class="sd">    Starts be calculating how many images were correctly detected</span>
+<span class="sd">    </span>
+<span class="sd">    Then calculates calculates a confusion matrix for every atribute in the binarized metada</span>
+<span class="sd">    </span>
+<span class="sd">    Finally calculates accuracy and shows it in consol</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Cargando configuracion</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Initial setup</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;configuracion.json&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">configuration</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="n">json_dir</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">][</span><span class="s1">&#39;json_dir&#39;</span><span class="p">]</span>
+    <span class="n">dataset_binarizada_input</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">][</span><span class="s1">&#39;binarizar_dataset&#39;</span><span class="p">][</span><span class="s1">&#39;dataset_binarizada&#39;</span><span class="p">]</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">][</span><span class="s1">&#39;binarizar_dataset&#39;</span><span class="p">][</span><span class="s1">&#39;verbose&#39;</span><span class="p">]</span>
+    <span class="n">json_suffix_detect</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">][</span><span class="s1">&#39;json_suffix_detect&#39;</span><span class="p">]</span>
+    <span class="n">json_suffix_data</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">][</span><span class="s1">&#39;json_suffix_data&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Aca reescribo porque si, en la version final borrarlo</span>
+    <span class="n">dir_json</span> <span class="o">=</span> <span class="s1">&#39;FFHQ Json&#39;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Inicio ejecucion</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># List of jsons</span>
+    <span class="n">archivos_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dir_json</span><span class="p">)</span>
+
+    <span class="c1"># List of processed images</span>
+    <span class="n">detection</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># List of images with faces</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Length of json soffix</span>
+    <span class="n">l_json_suffix_detect</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_suffix_detect</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span>
+    <span class="n">l_json_suffix_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_suffix_data</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span>
+
+    <span class="c1"># Load processed images and images with faces lists</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">archivos_json</span><span class="p">:</span>
+        <span class="c1"># Check if json is from detection list</span>
+        <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="o">-</span><span class="n">l_json_suffix_detect</span><span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">json_suffix_detect</span><span class="p">):</span>
+            <span class="n">detection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[:</span><span class="o">-</span><span class="n">l_json_suffix_detect</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># Check if json is from data list</span>
+        <span class="k">elif</span> <span class="n">i</span><span class="p">[</span><span class="o">-</span><span class="n">l_json_suffix_data</span><span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">json_suffix_data</span><span class="p">):</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[:</span><span class="o">-</span><span class="n">l_json_suffix_data</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># List of images without faces</span>
+    <span class="n">no_data</span> <span class="o">=</span> <span class="n">control_dataset</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">detection</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="c1"># Show amount of json</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;total json: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">archivos_json</span><span class="p">)))</span>
+        <span class="c1"># Show amount of processed images</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;deteccion: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">detection</span><span class="p">)))</span>
+        <span class="c1"># Show amount of images with faces</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+        <span class="c1"># Show amount of images without faces and percentage from total</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> caras no detectadas, </span><span class="si">{}</span><span class="s2">%</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">no_data</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">no_data</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">detection</span><span class="p">),</span> <span class="mi">2</span><span class="p">)))</span>
+
+    <span class="c1"># Load dataset json</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.json&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_binarizada_input</span><span class="p">))</span> <span class="k">as</span> <span class="n">archivo</span><span class="p">:</span>
+            <span class="n">ffhq_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+
+    <span class="c1"># List of images without features</span>
+    <span class="n">no_existe_feature</span> <span class="o">=</span> <span class="n">ffhq_data</span><span class="p">[</span><span class="s1">&#39;feature&#39;</span><span class="p">][</span><span class="s1">&#39;no existe&#39;</span><span class="p">]</span>
+
+    <span class="c1"># List of processed images with features</span>
+    <span class="n">detection_with_feature</span> <span class="o">=</span> <span class="n">control_dataset</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">detection</span><span class="p">,</span> <span class="n">no_existe_feature</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># List of images with faces and features</span>
+    <span class="n">data_with_feature</span> <span class="o">=</span> <span class="n">control_dataset</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">detection_with_feature</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Show amount of images with faces and features</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;data without features: </span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">data_with_feature</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">data_with_feature</span><span class="p">))</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="mi">2</span><span class="p">)))</span>
+
+    <span class="c1"># List of images without faces but with features</span>
+    <span class="n">no_data_with_feature</span> <span class="o">=</span> <span class="n">control_dataset</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">no_data</span><span class="p">,</span> <span class="n">detection_with_feature</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Show amount of images without faces but with features</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>       
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;no_data without features: </span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">no_data</span><span class="p">)</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">no_data_with_feature</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">no_data</span><span class="p">)</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">no_data_with_feature</span><span class="p">))</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">no_data</span><span class="p">),</span> <span class="mi">2</span><span class="p">)))</span>
+
+    <span class="c1"># Extract keys from dataset json</span>
+    <span class="n">aux</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ffhq_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">claves</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">[</span><span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="c1"># List of attribute confusion matrix</span>
+    <span class="n">pruebas</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Load attribute confusion matrix list</span>
+    <span class="k">for</span> <span class="n">clave</span> <span class="ow">in</span> <span class="n">claves</span><span class="p">:</span>
+        <span class="n">pruebas</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">clave</span><span class="p">,</span> <span class="n">probar_caracteristica</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">,</span> <span class="n">detection_with_feature</span><span class="p">,</span> <span class="n">data_with_feature</span><span class="p">,</span> <span class="n">clave</span><span class="p">,</span> <span class="kc">False</span><span class="p">)])</span>
+
+    <span class="k">for</span> <span class="n">prueba</span> <span class="ow">in</span> <span class="n">pruebas</span><span class="p">:</span>
+        <span class="c1"># Extract attribute</span>
+        <span class="n">atributo</span> <span class="o">=</span> <span class="n">prueba</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Extrar confusion matrix</span>
+        <span class="n">tp</span> <span class="o">=</span> <span class="n">prueba</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="n">prueba</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">prueba</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">tn</span> <span class="o">=</span> <span class="n">prueba</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+        
+        <span class="c1"># Calculate positive precision</span>
+        <span class="n">positive_precision</span> <span class="o">=</span> <span class="n">tp</span><span class="o">/</span><span class="p">(</span><span class="n">tp</span><span class="o">+</span><span class="n">fp</span><span class="p">)</span>
+        <span class="c1"># Calculate negative precision</span>
+        <span class="n">negative_precision</span> <span class="o">=</span> <span class="n">tn</span><span class="o">/</span><span class="p">(</span><span class="n">tn</span><span class="o">+</span><span class="n">fn</span><span class="p">)</span>
+        <span class="c1"># Calculate sensitivity (positive recall)</span>
+        <span class="n">sensitivity</span> <span class="o">=</span> <span class="n">tp</span><span class="o">/</span><span class="p">(</span><span class="n">tp</span><span class="o">+</span><span class="n">fn</span><span class="p">)</span>
+        <span class="c1"># Calculate especificity (negative recall)</span>
+        <span class="n">especificity</span> <span class="o">=</span> <span class="n">tn</span><span class="o">/</span><span class="p">(</span><span class="n">tn</span><span class="o">+</span><span class="n">fp</span><span class="p">)</span>
+        <span class="c1"># Calculate accuracy</span>
+        <span class="n">accuracy</span> <span class="o">=</span> <span class="p">(</span><span class="n">tp</span><span class="o">+</span><span class="n">tn</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">tp</span><span class="o">+</span><span class="n">fp</span><span class="o">+</span><span class="n">fn</span><span class="o">+</span><span class="n">tn</span><span class="p">)</span>
+        <span class="c1"># calculate true acurracy</span>
+        <span class="n">true_accuracy</span> <span class="o">=</span> <span class="n">positive_precision</span>
+        <span class="c1"># Calculate false accuracy</span>
+        <span class="n">false_accuracy</span> <span class="o">=</span> <span class="n">fn</span><span class="o">/</span><span class="p">(</span><span class="n">tn</span><span class="o">+</span><span class="n">fn</span><span class="p">)</span>
+        <span class="c1"># Calculate F1:</span>
+        <span class="n">F1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">positive_precision</span><span class="o">*</span><span class="n">sensitivity</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">positive_precision</span><span class="o">+</span><span class="n">sensitivity</span><span class="p">)</span>
+        <span class="c1"># Calculate F2:</span>
+        <span class="n">F2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">negative_precision</span><span class="o">*</span><span class="n">especificity</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">negative_precision</span><span class="o">+</span><span class="n">especificity</span><span class="p">)</span>
+        
+        <span class="c1"># Show attribute</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atributo</span><span class="o">.</span><span class="n">upper</span><span class="p">()))</span>
+        <span class="c1"># Show confusion matrix</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;True Positive: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">False Positive: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">False Negative: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">True Negative: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tn</span><span class="p">))</span>
+        <span class="c1"># Show accuracys</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Global accuracy: </span><span class="si">{}</span><span class="s1">%</span><span class="se">\n</span><span class="s1">True acurracy: </span><span class="si">{}</span><span class="s1">%</span><span class="se">\n</span><span class="s1">False accurracy </span><span class="si">{}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">accuracy</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">true_accuracy</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">false_accuracy</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="c1"># Show precisions</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Positive precision: </span><span class="si">{}</span><span class="s1">%</span><span class="se">\n</span><span class="s1">Negative precision: </span><span class="si">{}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">positive_precision</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">negative_precision</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="c1"># Show recalls</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sensitivity: </span><span class="si">{}</span><span class="s1">%</span><span class="se">\n</span><span class="s1">Especificity: </span><span class="si">{}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">sensitivity</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">especificity</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="c1"># Show F1 and F2</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;F1 score: </span><span class="si">{}</span><span class="s1">%</span><span class="se">\n</span><span class="s1">F2 score: </span><span class="si">{}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">F1</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">F2</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Fin ejecucion</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Facial Feature</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">Mains</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Rinaldo Almada.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

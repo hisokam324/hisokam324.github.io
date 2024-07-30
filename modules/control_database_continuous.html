@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>control_database_continuous &#8212; Facial Feature 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for control_database_continuous</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This program takes the FFHQ feature metadata, extracts the pose of the face and looks for a threshold to predict if an image will be well detected based on the pose</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../control_database_continuous.html#control_database_continuous.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Run program:</span>
+<span class="sd">    </span>
+<span class="sd">    Stars by loading feature FFHQ dataset</span>
+<span class="sd">    </span>
+<span class="sd">    Then calculates how many images were correctly detected</span>
+<span class="sd">    </span>
+<span class="sd">    Then extracts the headpose metadata</span>
+<span class="sd">    </span>
+<span class="sd">    Finally plots the headpose angle discriminating which were detected or not</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Cargando configuracion</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Initial setup</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;configuracion.json&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">configuration</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="n">FFHQ_path</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">][</span><span class="s1">&#39;input_dir&#39;</span><span class="p">]</span>
+    <span class="n">json_dir</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">][</span><span class="s1">&#39;json_dir&#39;</span><span class="p">]</span>
+    <span class="n">dataset_dir</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">][</span><span class="s1">&#39;binarizar_dataset&#39;</span><span class="p">][</span><span class="s1">&#39;dataset_dir&#39;</span><span class="p">]</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">][</span><span class="s1">&#39;binarizar_dataset&#39;</span><span class="p">][</span><span class="s1">&#39;verbose&#39;</span><span class="p">]</span>
+    <span class="n">json_suffix_detect</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">][</span><span class="s1">&#39;json_suffix_detect&#39;</span><span class="p">]</span>
+    <span class="n">json_suffix_data</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">][</span><span class="s1">&#39;json_suffix_data&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Aca reescribo porque si, en la version final borrarlo</span>
+    <span class="n">FFHQ_path</span> <span class="o">=</span> <span class="s1">&#39;FFHQ small&#39;</span>
+    <span class="n">json_dir</span> <span class="o">=</span> <span class="s1">&#39;FFHQ Json&#39;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Inicio ejecucion</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># List of FFHQ jsons</span>
+    <span class="n">archivos</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">json_dir</span><span class="p">)</span>
+
+    <span class="c1"># List of processed images</span>
+    <span class="n">detection</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># List of images with faces</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Length of json soffix</span>
+    <span class="n">l_json_suffix_detect</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_suffix_detect</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span>
+    <span class="n">l_json_suffix_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_suffix_data</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span>
+
+    <span class="c1"># Load processed images</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">archivos</span><span class="p">:</span>
+        <span class="c1"># Check if json is from detection list</span>
+        <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="o">-</span><span class="n">l_json_suffix_detect</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.json&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">json_suffix_detect</span><span class="p">):</span>
+            <span class="n">detection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[:</span><span class="o">-</span><span class="n">l_json_suffix_detect</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># Check if json is from data list</span>
+        <span class="k">elif</span> <span class="n">i</span><span class="p">[</span><span class="o">-</span><span class="n">l_json_suffix_data</span><span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">json_suffix_data</span><span class="p">):</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[:</span><span class="o">-</span><span class="n">l_json_suffix_data</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">pitch_detection</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">yaw_detection</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">roll_detection</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">pitch_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">yaw_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">roll_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">pitch_no_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">yaw_no_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">roll_no_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">detection</span><span class="p">:</span>
+        <span class="c1"># Open the feature.json of image</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">.json&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_dir</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="k">as</span> <span class="n">dataset</span><span class="p">:</span>
+            <span class="n">ffhq_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">pitch_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;faceAttributes&#39;</span><span class="p">][</span><span class="s1">&#39;headPose&#39;</span><span class="p">][</span><span class="s1">&#39;pitch&#39;</span><span class="p">])</span>
+                <span class="n">yaw_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;faceAttributes&#39;</span><span class="p">][</span><span class="s1">&#39;headPose&#39;</span><span class="p">][</span><span class="s1">&#39;yaw&#39;</span><span class="p">])</span>
+                <span class="n">roll_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;faceAttributes&#39;</span><span class="p">][</span><span class="s1">&#39;headPose&#39;</span><span class="p">][</span><span class="s1">&#39;roll&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pitch_no_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;faceAttributes&#39;</span><span class="p">][</span><span class="s1">&#39;headPose&#39;</span><span class="p">][</span><span class="s1">&#39;pitch&#39;</span><span class="p">])</span>
+                <span class="n">yaw_no_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;faceAttributes&#39;</span><span class="p">][</span><span class="s1">&#39;headPose&#39;</span><span class="p">][</span><span class="s1">&#39;yaw&#39;</span><span class="p">])</span>
+                <span class="n">roll_no_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;faceAttributes&#39;</span><span class="p">][</span><span class="s1">&#39;headPose&#39;</span><span class="p">][</span><span class="s1">&#39;roll&#39;</span><span class="p">])</span>
+                
+            <span class="n">pitch_detection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;faceAttributes&#39;</span><span class="p">][</span><span class="s1">&#39;headPose&#39;</span><span class="p">][</span><span class="s1">&#39;pitch&#39;</span><span class="p">])</span>
+            <span class="n">yaw_detection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;faceAttributes&#39;</span><span class="p">][</span><span class="s1">&#39;headPose&#39;</span><span class="p">][</span><span class="s1">&#39;yaw&#39;</span><span class="p">])</span>
+            <span class="n">roll_detection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ffhq_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;faceAttributes&#39;</span><span class="p">][</span><span class="s1">&#39;headPose&#39;</span><span class="p">][</span><span class="s1">&#39;roll&#39;</span><span class="p">])</span>
+
+
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Pitch&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">pitch_detection</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">])</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Yaw&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">yaw_detection</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="o">-</span><span class="mi">75</span><span class="p">,</span> <span class="o">-</span><span class="mi">50</span><span class="p">,</span> <span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Roll&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">roll_detection</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pitch_data</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pitch_no_data</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">yaw_data</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">yaw_no_data</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">roll_data</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">roll_no_data</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    
+    <span class="k">return</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Facial Feature</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">Mains</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Rinaldo Almada.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
