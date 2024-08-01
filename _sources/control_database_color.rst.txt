@@ -1,7 +1,0 @@
-control\_database\_color module
-===============================
-
-.. automodule:: control_database_color
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,7 +1,0 @@
-roll\_angle module
-==================
-
-.. automodule:: roll_angle
-   :members:
-   :undoc-members:
-   :show-inheritance:

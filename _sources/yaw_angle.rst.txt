@@ -1,7 +1,0 @@
-yaw\_angle module
-=================
-
-.. automodule:: yaw_angle
-   :members:
-   :undoc-members:
-   :show-inheritance:

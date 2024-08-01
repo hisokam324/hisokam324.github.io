@@ -1,7 +1,0 @@
-file\_landmark module
-=====================
-
-.. automodule:: file_landmark
-   :members:
-   :undoc-members:
-   :show-inheritance:
